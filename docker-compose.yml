@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    networks:
+      - my-network
+    depends_on:
+      - prometheus
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    networks:
+      - my-network
+    depends_on:
+      - backend
+
+  prometheus:
+    build: ./prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - my-network
+
+  grafana:
+    build: ./grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - my-network
+    depends_on:
+      - prometheus
+
+  iperf-server:
+    image: networkstatic/iperf3
+    command: -s
+    networks:
+      - my-network
+    ports:
+      - "5201:5201"
+
+  client1:
+    image: networkstatic/iperf3
+    networks:
+      - my-network
+
+  client2:
+    image: networkstatic/iperf3
+    networks:
+      - my-network
+
+  node-exporter:
+    image: prom/node-exporter
+    networks:
+      - my-network
+    ports:
+      - "9100:9100"
+
+networks:
+  my-network:
+    driver: bridge
