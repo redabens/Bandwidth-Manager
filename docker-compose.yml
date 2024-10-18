@@ -42,39 +42,47 @@ services:
     command: "iperf3 -s"
     networks:
       qoe_network:
-    depends_on:
-      - backend
-
-  # Les clients qui se connectent au serveur via le routeur
-  client1:
-    build: ./client
-    container_name: qoe_client1
+        # ipv4_address: 172.18.0.1
+    cap_add:
+      - NET_ADMIN
+    privileged: true
+  
+  server:
+    image: nginx
     networks:
       qoe_network:
-    depends_on:
-      - router
-    command: "sh -c 'tc qdisc add dev eth0 root tbf rate 10mbit burst 32kbit latency 400ms && ping 8.8.8.8'"
-    privileged: true  # Ajouté pour donner des privilèges supplémentaires
+        # ipv4_address: 172.18.0.2
+    privileged: true
+
+  client1:
+    build:
+      context: ./client # Assurez-vous que le Dockerfile est ici
+    networks:
+      qoe_network:
+        # ipv4_address: 172.18.0.3
+    cap_add:
+    - NET_ADMIN
+    privileged: true
 
   client2:
-    build: ./client
-    container_name: qoe_client2
+    build:
+      context: ./client
     networks:
       qoe_network:
-    depends_on:
-      - router
-    command: "sh -c 'tc qdisc add dev eth0 root tbf rate 10mbit burst 32kbit latency 400ms && ping 8.8.8.8'"
-    privileged: true  # Ajouté pour donner des privilèges supplémentaires
+        # ipv4_address: 172.18.0.4
+    cap_add:
+    - NET_ADMIN
+    privileged: true
 
   client3:
-    build: ./client
-    container_name: qoe_client3
+    build:
+      context: ./client
     networks:
       qoe_network:
-    depends_on:
-      - router
-    command: "sh -c 'tc qdisc add dev eth0 root tbf rate 10mbit burst 32kbit latency 400ms && ping 8.8.8.8'"
-    privileged: true  # Ajouté pour donner des privilèges supplémentaires
+        # ipv4_address: 172.18.0.5
+    cap_add:
+    - NET_ADMIN
+    privileged: true
 
 networks:
   qoe_network:
