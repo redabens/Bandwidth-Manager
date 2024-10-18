@@ -11,3 +11,4 @@ EXPOSE 9090
 
 # Démarrer Prometheus avec le fichier de configuration personnalisé
 CMD ["--config.file=/etc/prometheus/prometheus.yml"]
+

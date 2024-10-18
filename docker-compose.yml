@@ -1,21 +1,19 @@
-version: '3.8'
-
 services:
   backend:
     build: ./backend
     ports:
-      - "3001:3001"
+      - "3000:3000"
     networks:
-      - my-network
+      qoe_network:
     depends_on:
       - prometheus
 
   frontend:
     build: ./frontend
     ports:
-      - "3000:80"
+      - "5173:5173"
     networks:
-      - my-network
+      qoe_network:
     depends_on:
       - backend
 
@@ -26,42 +24,62 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - my-network
+      qoe_network:
 
   grafana:
     build: ./grafana
     ports:
-      - "3000:3000"
+      - "3001:3001"
     networks:
-      - my-network
+      qoe_network:
     depends_on:
       - prometheus
 
-  iperf-server:
+  # Le routeur optionnel avec RSVP activé pour gérer les requêtes de bande passante
+  router:
     image: networkstatic/iperf3
-    command: -s
+    container_name: qoe_router
+    command: "iperf3 -s"
     networks:
-      - my-network
-    ports:
-      - "5201:5201"
+      qoe_network:
+    depends_on:
+      - backend
 
+  # Les clients qui se connectent au serveur via le routeur
   client1:
-    image: networkstatic/iperf3
+    build: ./client
+    container_name: qoe_client1
     networks:
-      - my-network
+      qoe_network:
+    depends_on:
+      - router
+    command: "sh -c 'tc qdisc add dev eth0 root tbf rate 10mbit burst 32kbit latency 400ms && ping 8.8.8.8'"
+    privileged: true  # Ajouté pour donner des privilèges supplémentaires
 
   client2:
-    image: networkstatic/iperf3
+    build: ./client
+    container_name: qoe_client2
     networks:
-      - my-network
+      qoe_network:
+    depends_on:
+      - router
+    command: "sh -c 'tc qdisc add dev eth0 root tbf rate 10mbit burst 32kbit latency 400ms && ping 8.8.8.8'"
+    privileged: true  # Ajouté pour donner des privilèges supplémentaires
 
-  node-exporter:
-    image: prom/node-exporter
+  client3:
+    build: ./client
+    container_name: qoe_client3
     networks:
-      - my-network
-    ports:
-      - "9100:9100"
+      qoe_network:
+    depends_on:
+      - router
+    command: "sh -c 'tc qdisc add dev eth0 root tbf rate 10mbit burst 32kbit latency 400ms && ping 8.8.8.8'"
+    privileged: true  # Ajouté pour donner des privilèges supplémentaires
 
 networks:
-  my-network:
+  qoe_network:
     driver: bridge
+    name: qoe_network  # Spécifie un nom explicite pour le réseau
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
