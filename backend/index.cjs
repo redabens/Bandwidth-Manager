@@ -15,7 +15,7 @@ mongoose.connect(
     'mongodb+srv://redabens:Redabens2004..@cluster-rs.iwvq9.mongodb.net/bandwidth'
 )
 .then(() => {
-    console.log('MongoDB connected successfully');
+    console.log('MongoDB connected successfully....');
 })
 .catch(err => {
     console.error('MongoDB connection error:', err);
