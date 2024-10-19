@@ -7,9 +7,13 @@ import Header from "../components/Header";
 import DashboardPage from "./DashboardPage";
 
 export default function Layout(){
+  const token = sessionStorage.getItem('token');
+  console.log(token);
+  if(!token){
+    return <Navigate to='/login'/>
+  }
+    
   const [user, setUser] = useState({}); // État pour stocker les données re
-
-  
   return (
     <div className='grid-container'>
       <div className='sidebar'>

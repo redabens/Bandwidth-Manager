@@ -1,31 +1,28 @@
-import React, { useState,useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import axios from "axios";
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-  const [_, setCookies] = useCookies(["access_token"]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    try {
-      const result = await axios.post("http://localhost:3001/auth/login", {
-        email,
-        password,
+    console.log(email, password);
+    axios.post("http://localhost:3000/login",
+      {email:email,password:password})
+      .then((res) => {
+        if (res.status === 200) {
+          sessionStorage.setItem("token", res.data.token);
+          navigate("/");
+        }
+      }).catch((error)=>{
+        if(error.response){
+          console.log(error.response.data);
+          alert(error.response.data);
+        }
       });
-
-      setCookies("access_token", result.data.token);
-      window.localStorage.setItem("userID", result.data.userID);
-
-      navigate('/');
-      
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   return (
@@ -51,7 +48,8 @@ const LoginPage = () => {
             id="email"
             value={email}
             placeholder="Enter your Email"
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) => {
+              setEmail(event.target.value)}}
             className="bg-[#F0EFFF] text-[#A7A3FF] focus:outline-none rounded-[6px] p-4 w-full placeholder-[#A7A3FF]" 
             required
           />
@@ -62,7 +60,7 @@ const LoginPage = () => {
             id="password"
             value={password}
             placeholder="Password"
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(event) => {setPassword(event.target.value)}}
             className="bg-[#F0EFFF] text-[#A7A3FF] focus:outline-none rounded-[6px] p-4 w-full placeholder-[#A7A3FF]"
             required
           />

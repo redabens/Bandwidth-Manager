@@ -1,11 +1,11 @@
 const express = require('express');
-const Metrics= require('../models/metrics.cjs'); // Adjust the path as necessary
+const Metric = require('../models/metrics.cjs'); // Adjust the path as necessary
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
    try {
-       const response = await Metrics.find({})
+       const response = await Metric.find({})
            .sort({ timestamp: -1 }) // Tri par timestamp en ordre décroissant
            .limit(100); // Limite à 24 résultats
        res.json(response);

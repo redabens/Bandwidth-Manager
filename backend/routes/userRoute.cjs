@@ -1,6 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User= require('../models/User.cjs'); // Adjust the path as necessary
+const secret = 'MARNSTACK'
 
 const router = express.Router();
 
@@ -24,20 +26,21 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+    console.log(req.body);
     const { email, password } = req.body;
 
-    const userExist = await User.findOne({ email });
-
+    const userExist = await User.findOne({ email:email });
+    console.log(userExist);
     if (!userExist) {
-        return res.status(422).json({ error: "User doesn't exist!" });
+        return res.status(404).json({ error: "User doesn't exist!" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, userExist.password);
     if (!isPasswordValid) {
-        return res.status(422).json({ error: "Invalid password!" });
+        return res.status(404).json({ error: "Invalid password!" });
     }
-
-    res.status(200).json({ message: "User logged in successfully", user: userExist });
+    const token = jwt.sign({ _id: userExist._id }, secret, { expiresIn: 86400 });
+    return res.status(200).send({ token });
 });
 
 module.exports = router;

@@ -55,6 +55,9 @@ const NetTopology = () => {
       },
       layout: {
         hierarchical: false, // Disable hierarchical to use manual positioning
+      },
+      interaction: {
+        zoomView: false, // Désactive le zoom
       }
     };
 
@@ -62,10 +65,11 @@ const NetTopology = () => {
   }, []); // The empty array ensures this effect runs only once when the component is mounted
 
   return (
-    <div className='bg-[#F7F9FB] text-black font-bold text-xl rounded-xl'>
-        <div>Visualization of network topology</div>
-      <div id="network-graph" style={{ width: "100%", height: "500px" }}></div>
-    </div>
+    <>
+      <div>Visualization of network topology</div>
+      <div id="network-graph" style={{ width: "100%", height: "500px", minWidth: "450px", // Taille minimale pour éviter la réduction trop importante
+        minHeight: "470px" }}></div>
+    </>
   );
 };
 
