@@ -21,25 +21,25 @@ const NetTopology = () => {
     const options = {
       nodes: {
         shape: 'dot', // Default shape for nodes
-        size: 30,
-        font: { size: 16, color: '#00' }, // White text for node labels
-        margin: 10
+        size: 25, // Smaller node size to reduce the chart size
+        font: { size: 14, color: '#000' }, // Adjusted font size for labels
+        margin: 8
       },
       groups: {
         manager: {
           shape: 'box', // Manager node as a circle
-          color: { background: '#B1E3FF', border: 'transparent' }, // Red background for the manager node
-          font: { size: 18, color: 'black', align: 'top' }, // Label aligned to the top of the node
+          color: { background: '#B1E3FF', border: 'transparent' }, // Background color
+          font: { size: 16, color: 'black', align: 'top' }, // Font size for manager node
         },
         switch: {
           shape: 'ellipse', // Switch node as a box
-          color: { background: '#A1E3CB', border: 'transparent' }, // Green background for switch node
-          font: { size: 18, color: 'black', align: 'top' },
+          color: { background: '#A1E3CB', border: 'transparent' }, // Background color
+          font: { size: 16, color: 'black', align: 'top' }, // Font size for switch node
         },
         user: {
           shape: 'box', // Users as ellipses
-          color: { background: '#A8C5DA', border: 'transparent' }, // Blue background for user nodes
-          font: { size: 16, color: 'black', align: 'bottom' }, // Label aligned to the bottom of the node
+          color: { background: '#A8C5DA', border: 'transparent' }, // Background color
+          font: { size: 14, color: 'black', align: 'bottom' }, // Adjusted font size for user nodes
         }
       },
       edges: {
@@ -48,7 +48,6 @@ const NetTopology = () => {
           to: { enabled: true, scaleFactor: 1.2 }, // Directional arrows for edges
         },
         color: { inherit: false }, // Don't inherit the color from nodes
-        
       },
       physics: {
         enabled: false, // Disable physics to make nodes stay in place

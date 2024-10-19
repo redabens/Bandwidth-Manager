@@ -4,36 +4,49 @@ import { Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
 const Sidebar = () => {
   return (
     <>
-      <h2 className="text-lg font-bold mb-4">MARN Stack</h2>
-      <ul className="space-y-2">
-        <NavLink
-         to={`/dashboard`}
-          key={uuid()}
-          className='sibedarbtn'
-          activeclassname="active"
-        >
+      <div className='Sidebar'>
+        {/* Admin Picture and Name */}
+        <div className="admin-container">
           <img
-            src="/assets/selected_dashboard.svg"
-            alt="dashboard_icon"
-            className="sidebar-icon"
+            src="/assets/admin.png" /* Replace with actual image path */
+            alt="admin_pic"
+            className="admin-pic"
           />
-          Dashboards
-        </NavLink>
-        <NavLink
-          to={`/bandtrack`}
-          key={uuid()}
-          className='sibedarbtn'
-          activeclassname="active"
-        >
-          <img
-            src="/assets/selected_dashboard.svg"
-            alt="dashboard_icon"
-            className="sidebar-icon"
-          />
-          Bandwidth Track
-        </NavLink>
-        <li>Overview</li>
-      </ul>
+          <div className="admin-name-container">
+            <span className="admin-name">MARN Stack</span> {/* Replace with actual name */}
+          </div>
+        </div>
+        <h2 className="sidebar-title">Dashboards</h2>
+        <ul className="sidebar-list">
+          <NavLink
+            to={`/dashboard`}
+            key={uuid()}
+            className='sidebar-btn'
+            activeclassname="active"
+          >
+            <img
+              src="/assets/Overview.png"
+              alt="dashboard_icon"
+              className="sidebar-icon"
+            />
+            Overview
+          </NavLink>
+          <NavLink
+            to={`/bandtrack`}
+            key={uuid()}
+            className='sidebar-btn'
+            activeclassname="active"
+          >
+            <img
+              src="/assets/File.png"
+              alt="dashboard_icon"
+              className="sidebar-icon"
+            />
+            BW Tracking
+          </NavLink>
+        </ul>
+      </div>
+      
     </>
   );
 };
