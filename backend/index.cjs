@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Client } = require('ssh2');
 const { io } = require('socket.io-client');
 const  Metric = require('./models/metrics.cjs'); // Adjust the path as necessary
+const axios = require('axios');
 const userRoute = require('./routes/userRoute.cjs'); // Adjust the path as necessary
 
 const app = express();
@@ -25,39 +26,25 @@ mongoose.connect(
     console.error('MongoDB connection error:', err);
 });
 
-const collectMetrics = async ()=>{
-    const socket = io('http://192.168.1.66:5000');
-
-socket.on('connect', () => {
-    console.log('Connecté au serveur Flask via WebSocket');
-});
-
-socket.on('metrics_update', (data) => {
-    console.log('Métriques mises à jour:', data.metrics);
-});
-
-// Gère la déconnexion
-socket.on('disconnect', () => {
-    console.log('Déconnecté du serveur Flask');
-});
-}
-
-app.get('/api/bandwidth', async (req,res)=>{
+const collectMetrics = async () => {
     try {
-        const rawData = await BandwidthData.find().sort({ timestamp: -1 }).limit(50);
-        const data = rawData.map(entry => ({
-            timestamp: entry.timestamp.toISOString(),
-            client_id: entry.clientID,
-            interface_speed: entry.bw_requested,
-        }));
-        console.log("data",data);
-        res.set('Content-Type', 'application/json'); // Définir le Content-Type manuellement
-        res.json(data); // Assurez-vous que ça renvoie bien du JSON
+        const response = await axios.get('http://192.168.1.66:5000/emit_metrics');
+        if (response.status === 200) {
+            const metrics = response.data.metrics;  // Accédez à l'objet metrics
+            for (const node in metrics) {
+                const metric = metrics[node];  // Obtenez les détails du nœud
+                // Vous pouvez maintenant enregistrer vos métriques dans la base de données ici
+                const metricToSave = new Metric({
+                    clientID: metric.client_id,
+                    bw_requested: parseInt(metric.bytes_received),
+                });
+                await metricToSave.save();
+            }
+        }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Erreur lors de l\'envoi des paramètres:', error.message);
     }    
-})
-const axios = require('axios');
+}
 
 // Fonction pour envoyer la bande passante à Flask
 async function setBandwidth(host, rate) {
@@ -71,19 +58,6 @@ async function setBandwidth(host, rate) {
     console.error('Erreur lors de l\'envoi des paramètres:', error.message);
   }
 }
-
-// Exemple d'utilisation
-/*setBandwidth('server', 4);  // 4 Mbps pour le serveur
-setBandwidth('client1', 2);  // 2 Mbps pour le client1
-setBandwidth('client2', 2);  // 2 Mbps pour le client2*/
-collectMetrics();
-// Démarrer la collecte des métriques toutes les secondes
-// collectMetrics('client1');
-// adjustBandwidth('client1',8);
-// setInterval(() => {
-//     collectMetrics('client1');
-//     collectMetrics('client2');
-// }, 1000); // 1000 ms = 1 seconde
 
 // Démarrer le serveur
 app.listen(port, () => {
