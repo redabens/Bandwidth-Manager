@@ -5,7 +5,7 @@ import DashboardPage from './pages/DashboardPage'; // Ensure this import matches
 const App = () => {
   return (
     <div className="app">
-      <DashboardPage /> {/* Show only the Users Page */}
+      
     </div>
   );
 };
