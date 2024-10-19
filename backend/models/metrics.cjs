@@ -9,6 +9,18 @@ const metricSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
+        IP:{
+            type: String,
+            required: true
+        },
+        bytes_requested:{
+            type: Number,
+            required: true
+        },
+        bytes_send:{
+            type: Number,
+            required: true
+        },
         timestamp: { type: Date, default: Date.now }
     });
 

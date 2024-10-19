@@ -1,5 +1,4 @@
 import React, { useState,useEffect } from 'react';
-import logo from '../../public/assets/Saly-14.png';
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +38,7 @@ const LoginPage = () => {
         <div className='text-3xl md:text-4xl mt-4 md:mt-6'>Our Platform</div>
       </div>
       {/* Image is hidden on small screens and visible on medium screens and larger */}
-      <img src={logo} className='hidden md:block mt-8 w-64 h-64 md:w-88 md:h-[26rem] mx-auto md:mr-20' />
+      <img src='/assets/Saly-14.png' className='hidden md:block mt-8 w-64 h-64 md:w-88 md:h-[26rem] mx-auto md:mr-20' />
     </div>
 
     {/* Right section with form */}

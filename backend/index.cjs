@@ -41,6 +41,9 @@ const collectMetrics = async () => {
                 const metricToSave = new Metric({
                     clientID: metric.client_id,
                     bw_requested: parseInt(metric.bytes_received),
+                    IP: metric.ip,
+                    bytes_requested: parseInt(metric.bytes_received),
+                    bytes_send: parseInt(metric.bytes_sent)
                 });
                 await metricToSave.save();
             }
@@ -62,7 +65,9 @@ async function setBandwidth(host, rate) {
     console.error('Erreur lors de l\'envoi des paramètres:', error.message);
   }
 }
-
+setInterval(()=>{
+    collectMetrics();
+},5000);
 // Démarrer le serveur
 app.listen(port, () => {
     console.log(`Serveur en cours d'exécution sur http://localhost:${port}`);
