@@ -1,48 +1,79 @@
-// src/pages/LoginPage.jsx
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import logo from '../../public/assets/Saly-14.png';
+import axios from "axios";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
-const LoginPage = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
+const LoginPage = () => {
+  const [_, setCookies] = useCookies(["access_token"]);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // You can add your authentication logic here (e.g., API call)
-    if (username && password) {
-      onLogin(); // Call the onLogin function passed from App
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const result = await axios.post("http://localhost:3001/auth/login", {
+        email,
+        password,
+      });
+
+      setCookies("access_token", result.data.token);
+      window.localStorage.setItem("userID", result.data.userID);
+
+      navigate('/');
+      
+    } catch (error) {
+      console.error(error);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md">
-        <h2 className="text-lg font-bold mb-4">Login</h2>
+<div className="flex items-center w-screen h-screen bg-white">
+  <div className='flex flex-col md:flex-row justify-end w-full px-4 md:px-20'>
+    {/* Left section with text and image */}
+    <div className="flex justify-center text-center md:text-left">
+      <div className='text-black text-lg'>
+        <div className='font-bold text-3xl md:text-4xl'>Sign Into Our Platform</div>
+        <div className='text-3xl md:text-4xl mt-4 md:mt-6'>Our Platform</div>
+      </div>
+      {/* Image is hidden on small screens and visible on medium screens and larger */}
+      <img src={logo} className='hidden md:block mt-8 w-64 h-64 md:w-88 md:h-[26rem] mx-auto md:mr-20' />
+    </div>
+
+    {/* Right section with form */}
+    <div className="mt-8 md:mt-0 flex justify-center md:justify-end w-full md:w-2/5">
+      <form onSubmit={handleSubmit} className="w-full md:w-[26rem]">
+        <h2 className="hidden md:block text-2xl md:text-3xl font-bold text-black mb-6 text-center md:text-left">Sign in</h2>
         <div className="mb-4">
-          <label htmlFor="username" className="block mb-2">Username</label>
           <input
             type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full"
+            id="email"
+            value={email}
+            placeholder="Enter your Email"
+            onChange={(event) => setEmail(event.target.value)}
+            className="bg-[#F0EFFF] text-[#A7A3FF] focus:outline-none rounded-[6px] p-4 w-full placeholder-[#A7A3FF]" 
             required
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="password" className="block mb-2">Password</label>
+        <div className="mt-6">
           <input
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full"
+            placeholder="Password"
+            onChange={(event) => setPassword(event.target.value)}
+            className="bg-[#F0EFFF] text-[#A7A3FF] focus:outline-none rounded-[6px] p-4 w-full placeholder-[#A7A3FF]"
             required
           />
         </div>
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">Login</button>
+        <button type="submit" className="bg-[#95A4FC] w-full text-white font-bold py-3 px-4 rounded hover:bg-[#697EFF] mt-12">Login</button>
       </form>
     </div>
-  );
-};
+  </div>
+</div>
 
+
+)}
 export default LoginPage;
