@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose.Schema;
 
 const metricSchema = new mongoose.Schema({
         clientID: {
@@ -7,7 +6,7 @@ const metricSchema = new mongoose.Schema({
             required: true
         },
         bw_requested: {
-            type: String,
+            type: Number,
             required: true
         },
         timestamp: { type: Date, default: Date.now }

@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const { Client } = require('ssh2');
+const { io } = require('socket.io-client');
+const  Metric = require('./models/metrics.cjs'); // Adjust the path as necessary
 const userRoute = require('./routes/userRoute.cjs'); // Adjust the path as necessary
 
 const app = express();
@@ -9,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/auth', userRoute);
+
 
 // MongoDB connection with error handling
 mongoose.connect(
@@ -20,87 +24,59 @@ mongoose.connect(
 .catch(err => {
     console.error('MongoDB connection error:', err);
 });
-// Fonction pour collecter les métriques
-const collectMetrics = (clientName) => {
-    const conn = new Client();
-    const sshConfig = {
-        host: '192.168.1.66', // Remplacez par l'IP de votre VM Ubuntu
-        port: 22,
-        username: 'mininet', // Remplacez par votre nom d'utilisateur sur la VM
-        privateKey: require('fs').readFileSync('C:\\Users\\redab\\.ssh\\id_rsa') // Chemin vers votre clé privée
-    };
-    let nb = 0;
-    if(clientName === 'client1'){
-        nb = '2';
-    }
-    else if(clientName === 'client2'){
-        nb = '3';
-    }else{
-        nb = '1';
-    }
-    const command = `tc -s qdisc show dev s1-eth${nb}`; // Commande pour récupérer les métriques
 
-    conn.on('ready', () => {
-        conn.exec(command, (err, stream) => {
-            if (err) throw err;
-            stream.on('close', (code, signal) => {
-                conn.end();
-            }).on('data', (data) => {
-                // Extraction des octets envoyés pour chaque client
-                const regex = /Sent\s+(\d+)\s+bytes/g;
-                let match;
-                const metrics = {};
-                let bytesSent = 0
+const collectMetrics = async ()=>{
+    const socket = io('http://192.168.1.66:5000');
 
-                while ((match = regex.exec(data)) !== null) {
-                    // Le nombre d'octets envoyés est dans le premier groupe de capture
-                    bytesSent = match[1];
-                }
-                console.log(`Métriques collectées pour ${clientName}: ${bytesSent}`);
-                
-                // Enregistrer les métriques dans la base de données
-                // const newMetric = new Metric({ clientName, metrics: data });
-                // newMetric.save()
-                //     .then(() => console.log('Métriques sauvegardées!'))
-                //     .catch(err => console.error('Erreur lors de la sauvegarde des métriques:', err));
-            }).stderr.on('data', (data) => {
-                console.error(`Erreur: ${data}`);
-            });
-        });
-    }).connect(sshConfig);
-};
+socket.on('connect', () => {
+    console.log('Connecté au serveur Flask via WebSocket');
+});
 
-const adjustBandwidth = (clientName, newBandwidth) => {
-    const conn = new Client();
-    const sshConfig = {
-        host: '192.168.1.66', // Remplacez par l'IP de votre VM Ubuntu
-        port: 22,
-        username: 'mininet', // Remplacez par votre nom d'utilisateur sur la VM
-        privateKey: require('fs').readFileSync('C:\\Users\\redab\\.ssh\\id_rsa') // Chemin vers votre clé privée
-    };
-    let nb = 0;
-    if(clientName === 'client1'){
-        nb = '2';
-    }
-    else if(clientName === 'client2'){
-        nb = '3';
-    }else{
-        nb = '1';
-    }
-    const command = `sudo tc class change dev s1-eth${nb} parent 1: classid 1:1 htb rate 1mbit ceil ${newBandwidth}mbit`;
+socket.on('metrics_update', (data) => {
+    console.log('Métriques mises à jour:', data.metrics);
+});
 
-    conn.on('ready', () => {
-        conn.exec(command, (err, stream) => {
-            if (err) throw err;
-            stream.on('close', (code, signal) => {
-                conn.end();
-                console.log(`Bande passante ajustée pour ${clientName} à ${newBandwidth}kbit`);
-            }).stderr.on('data', (data) => {
-                console.error(`Erreur lors de l'ajustement de la bande passante: ${data}`);
-            });
-        });
-    }).connect(sshConfig);
-};
+// Gère la déconnexion
+socket.on('disconnect', () => {
+    console.log('Déconnecté du serveur Flask');
+});
+}
+
+app.get('/api/bandwidth', async (req,res)=>{
+    try {
+        const rawData = await BandwidthData.find().sort({ timestamp: -1 }).limit(50);
+        const data = rawData.map(entry => ({
+            timestamp: entry.timestamp.toISOString(),
+            client_id: entry.clientID,
+            interface_speed: entry.bw_requested,
+        }));
+        console.log("data",data);
+        res.set('Content-Type', 'application/json'); // Définir le Content-Type manuellement
+        res.json(data); // Assurez-vous que ça renvoie bien du JSON
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }    
+})
+const axios = require('axios');
+
+// Fonction pour envoyer la bande passante à Flask
+async function setBandwidth(host, rate) {
+  try {
+    const response = await axios.post('http://<IP_VM>:5000/set_bandwidth', {
+      host: host,
+      rate: rate
+    });
+    console.log('Réponse du serveur Flask:', response.data);
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi des paramètres:', error.message);
+  }
+}
+
+// Exemple d'utilisation
+/*setBandwidth('server', 4);  // 4 Mbps pour le serveur
+setBandwidth('client1', 2);  // 2 Mbps pour le client1
+setBandwidth('client2', 2);  // 2 Mbps pour le client2*/
+collectMetrics();
 // Démarrer la collecte des métriques toutes les secondes
 // collectMetrics('client1');
 // adjustBandwidth('client1',8);
