@@ -5,6 +5,7 @@ const { Client } = require('ssh2');
 const { io } = require('socket.io-client');
 const  Metric = require('./models/metrics.cjs'); // Adjust the path as necessary
 const userRoute = require('./routes/userRoute.cjs'); // Adjust the path as necessary
+const metricsRoute = require('./routes/metrics.cjs'); 
 
 const app = express();
 const port = 3000;
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/auth', userRoute);
+app.use('/metrics',metricsRoute);
 
 
 // MongoDB connection with error handling
