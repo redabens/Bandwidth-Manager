@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const { Client } = require('ssh2');
+const  Metric = require('./models/metrics.cjs'); // Adjust the path as necessary
 const userRoute = require('./routes/userRoute.cjs'); // Adjust the path as necessary
 
 const app = express();
@@ -20,6 +22,21 @@ mongoose.connect(
 .catch(err => {
     console.error('MongoDB connection error:', err);
 });
+app.get('/api/bandwidth', async (req,res)=>{
+    try {
+        const rawData = await BandwidthData.find().sort({ timestamp: -1 }).limit(50);
+        const data = rawData.map(entry => ({
+            timestamp: entry.timestamp.toISOString(),
+            client_id: entry.clientID,
+            interface_speed: entry.bw_requested,
+        }));
+        console.log("data",data);
+        res.set('Content-Type', 'application/json'); // Définir le Content-Type manuellement
+        res.json(data); // Assurez-vous que ça renvoie bien du JSON
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }    
+})
 // Fonction pour collecter les métriques
 const collectMetrics = (clientName) => {
     const conn = new Client();
@@ -59,10 +76,10 @@ const collectMetrics = (clientName) => {
                 console.log(`Métriques collectées pour ${clientName}: ${bytesSent}`);
                 
                 // Enregistrer les métriques dans la base de données
-                // const newMetric = new Metric({ clientName, metrics: data });
-                // newMetric.save()
-                //     .then(() => console.log('Métriques sauvegardées!'))
-                //     .catch(err => console.error('Erreur lors de la sauvegarde des métriques:', err));
+                const newMetric = new Metric({ clientID:clientName,bw_requested:parseInt(bytesSent) });
+                newMetric.save()
+                    .then(() => console.log('Métriques sauvegardées!'))
+                    .catch(err => console.error('Erreur lors de la sauvegarde des métriques:', err));
             }).stderr.on('data', (data) => {
                 console.error(`Erreur: ${data}`);
             });
@@ -101,6 +118,11 @@ const adjustBandwidth = (clientName, newBandwidth) => {
         });
     }).connect(sshConfig);
 };
+
+// setInterval(()=>{
+//     collectMetrics('client1')
+//     collectMetrics('client2')
+// },10000)
 // Démarrer la collecte des métriques toutes les secondes
 // collectMetrics('client1');
 // adjustBandwidth('client1',8);
