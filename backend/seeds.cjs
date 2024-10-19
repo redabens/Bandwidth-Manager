@@ -12,15 +12,15 @@ mongoose.connect(
 .catch(err => {
     console.error('MongoDB connection error:', err);
 });
-const user = new User({
-    firstname: 'Admin',
-    lastname: 'Admin',
-    email: 'admin123@gmail.com',
-    password: bcrypt.hashSync('admin123',256),});
- user.save()
- .then(() => {
-     console.log('User created successfully....');
- })
-.catch(err => {
-    console.error('Error creating user:', err);
-});
+// const user = new User({
+//     firstname: 'Admin',
+//     lastname: 'Admin',
+//     email: 'admin123@gmail.com',
+//     password: bcrypt.hashSync('admin123',256),});
+//  user.save()
+//  .then(() => {
+//      console.log('User created successfully....');
+//  })
+// .catch(err => {
+//     console.error('Error creating user:', err);
+// });
