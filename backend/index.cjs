@@ -5,12 +5,14 @@ const { Client } = require('ssh2');
 const { io } = require('socket.io-client');
 const  Metric = require('./models/metrics.cjs'); // Adjust the path as necessary
 const axios = require('axios');
+const bodyParser = require("body-parser");
 const userRoute = require('./routes/userRoute.cjs'); // Adjust the path as necessary
-const metricsRoute = require('./routes/metrics.cjs'); 
+const metricsRoute = require('./routes/metrics.cjs');
 
 const app = express();
 const port = 3000;
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use('/auth', userRoute);

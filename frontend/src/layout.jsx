@@ -11,7 +11,6 @@ const RoutePage = () => {
             <Route path="/" element={<DashboardPage />}/>
             <Route path="/login" element={<LoginPage />}/>
             <Route path="/node" element={<NetTopology />}/>
-
           </Routes>
         </Router>
     </div>
