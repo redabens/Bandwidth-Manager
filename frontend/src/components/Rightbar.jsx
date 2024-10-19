@@ -4,7 +4,7 @@ import NetworkUsage from './NetworkUsage';
 
 const RightBar = () => {
   return (
-    <div className="fixed w-[17.5rem] h-[40rem] ml-[1.5rem] right-0 top-0 p-[1rem] gap-[1rem] border-l border-black-10 opacity-100">
+    <div className="w-full h-full right-0 top-0 p-[1rem] gap-[1rem] border-l border-black-10 opacity-100">
       {/* Activities Container */}
       <ActivitiesContainer />
 

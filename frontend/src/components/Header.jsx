@@ -2,7 +2,7 @@ import React from 'react';
 
 const Header = () => {
   return (
-    <div className="w-[65.3rem] h-[4.25rem] flex justify-between items-center p-5 border-b border-gray-300 opacity-100">
+    <div className="w-full h-[4.25rem] flex justify-between items-center p-5 border-b border-gray-300 opacity-100">
       <div className="flex items-center gap-2">
         <span className="w-[6.125rem] h-[1.75rem] flex justify-center items-center bg-transparent text-gray-300 text-[0.875rem] font-normal leading-[1.25rem] rounded-[0.5rem] opacity-100 p-1">
           Dashboards

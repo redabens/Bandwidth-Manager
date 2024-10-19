@@ -1,27 +1,40 @@
-import React from 'react';
+import {v4 as uuid} from 'uuid';
+import { Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   return (
-    <div className="w-[13.25rem] h-[64rem] p-[1rem] gap-[0.5rem] border-r border-gray-300 opacity-100">
-      <h2 className="text-lg font-bold mb-4">ByeWind</h2>
+    <>
+      <h2 className="text-lg font-bold mb-4">MARN Stack</h2>
       <ul className="space-y-2">
-        <li>Dashboards</li>
+        <NavLink
+         to={`/dashboard`}
+          key={uuid()}
+          className='sibedarbtn'
+          activeclassname="active"
+        >
+          <img
+            src="/assets/selected_dashboard.svg"
+            alt="dashboard_icon"
+            className="sidebar-icon"
+          />
+          Dashboards
+        </NavLink>
+        <NavLink
+          to={`/bandtrack`}
+          key={uuid()}
+          className='sibedarbtn'
+          activeclassname="active"
+        >
+          <img
+            src="/assets/selected_dashboard.svg"
+            alt="dashboard_icon"
+            className="sidebar-icon"
+          />
+          Bandwidth Track
+        </NavLink>
         <li>Overview</li>
-        <li>Bandwidth Track</li>
-        <li>Projects</li>
-        <li>Pages</li>
-        <li>User Profile</li>
-        <li>Overview</li>
-        <li>Projects</li>
-        <li>Campaigns</li>
-        <li>Documents</li>
-        <li>Followers</li>
-        <li>Account</li>
-        <li>Corporate</li>
-        <li>Blog</li>
-        <li>Social</li>
       </ul>
-    </div>
+    </>
   );
 };
 

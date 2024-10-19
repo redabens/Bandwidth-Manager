@@ -14,7 +14,7 @@ const COLORS = ['#A1E3CB', '#1C1C1C', '#95A4FC', '#B1E3FF'];
 
 const BandwidthDonutChart = () => {
   return (
-    <ResponsiveContainer width="50%" height={300}>
+    <ResponsiveContainer width="100%" height={300}>
       <PieChart>
         <Pie
           data={data}
