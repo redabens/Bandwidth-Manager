@@ -19,9 +19,11 @@ const DashboardPage = () => {
       
       <div className="grid grid-cols-2 gap-4 mt-4">
         <div className="bg-custom-gray rounded-lg p-4">
+          <h2 className="text-lg font-bold mb-4">Visualization of network topology</h2>
           <NetTopology />
         </div>
         <div className="bg-custom-gray rounded-lg p-4">
+        <h2 className="text-lg font-bold mb-4">Current Bandwidth Usage</h2>
           <BandwidthDonutChart />
         </div>
       </div>

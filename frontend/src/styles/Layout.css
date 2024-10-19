@@ -8,8 +8,8 @@
     grid-area: sidebar;
     width: calc(100dvw / 7);
     height: 100dvh;
-    padding: 1rem;
-    border-right: 1px solid #d1d5db;
+    
+    border-right: 1px solid #1C1C1C1A;
 }
 .main-content{
     grid-area: main-content;
@@ -17,7 +17,8 @@
     grid-template-rows: auto auto;
     width: 100%;
     height: 100dvh;
-    padding: 1rem;
+    padding: 0rem;
+    margin: 0;
     grid-template-areas:
     "header"
     "content";
@@ -45,3 +46,145 @@
 @media (max-width:900px){
     
 }
+
+/* Admin profile container */
+.admin-container {
+    display: flex;
+    align-items: center;
+    padding: 8px;   /* Padding for the container */
+    margin: 8px;
+    gap: 8px;       /* Space between image and text */
+    width: 180px;   /* Fill width */
+    height: auto;   /* Hug height */
+    border-radius: 12px;
+    margin-bottom: 12px;          /* Space between admin section and dashboard title */
+  }
+  
+  /* Admin picture */
+  .admin-pic {
+    width: 24px;     /* Circular image size */
+    height: 24px;
+    border-radius: 80px;  /* Fully round image */
+    background-color: #1C1C1C; /* Placeholder background color */
+  }
+  
+  /* Admin name container */
+  .admin-name-container {
+    display: flex;
+    align-items: center;
+    width: 164px;
+    height: auto;
+    gap: 8px;
+    border-radius: 8px;
+  }
+  
+  /* Admin name text */
+  .admin-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: #1C1C1C;  /* Text color */
+    text-align: left;
+  }
+
+/* Sidebar title */
+.sidebar-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 4px 12px;
+    color: #1f2937;  /* Dark text color */
+    text-align: left;
+    margin-bottom: 8px;  /* Space between title and buttons */
+  }
+  
+  /* List containing the sidebar buttons */
+  .sidebar-list {
+    list-style: none;
+    padding-left: 12px;  /* Indentation for the list items */
+    margin: 0;
+  }
+  
+  /* Sidebar button styling */
+  .sidebar-btn {
+    display: flex;
+    align-items: center;
+    padding: 4px 12px;
+    gap: 8px;
+    width: 180px;   /* Fill width */
+    height: auto;   /* Hug height */
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    border-radius: 8px;
+    text-align: left;
+    color: #000;    /* Default text color */
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-left: 12px; /* Additional indentation for buttons */
+  }
+  
+  .sidebar-btn img.sidebar-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+
+  /* Hover state */
+  .sidebar-btn:hover {
+    background-color: #f7f9fb38;
+  }
+  
+  .sidebar-btn.active {
+    background-color: #cbd1d6;  /* Active background color */
+    color: #1f2937;             /* Active text color */
+  }
+  
+  .bandwidth-donut-chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 70px;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .chart-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem; /* Adjust the space between chart and users */
+  }
+  
+  .chart-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .chart-center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .user-usage {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .user-point {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .user-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+  }
+   
