@@ -2,7 +2,6 @@ import {useState,useEffect} from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// Example data for 4 users
 const data = [
   { time: '10:00', user1: 400, user2: 300, user3: 200, user4: 278 },
   { time: '10:10', user1: 500, user2: 400, user3: 300, user4: 389 },
@@ -13,6 +12,53 @@ const data = [
 ];
 
 const BandwidthChart = () => {
+  const [metrics, setMetrics] = useState([]);
+  
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/metrics");
+        setMetrics(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCards();
+  }, []);
+
+  const organizeMetricsData = (metrics) => {
+    const dataMap = {};
+  
+    metricsData.forEach((metric) => {
+      const time = new Date(metric.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const clientID = metric.clientID;
+      const bwRequested = metric.bw_requested;
+  
+      // Initialize the object for the time if it doesn't exist
+      if (!dataMap[time]) {
+        dataMap[time] = { time }; // Initialize time entry
+      }
+  
+      // Add the bandwidth request under the client ID (e.g., user1, user2)
+      dataMap[time][clientID] = bwRequested;
+    });
+  
+    // Convert the dataMap into an array of objects
+    return Object.values(dataMap).map(entry => {
+      // Ensure all expected users are present in the final output
+      const completeEntry = {
+        time: entry.time,
+        user1: entry.user1 || 0,
+        user2: entry.user2 || 0,
+        user3: entry.user3 || 0,
+        user4: entry.user4 || 0,
+      };
+      return completeEntry;
+    });
+  };
+  const organizedData = organizeMetricsData(metrics);
+
+
   const [datas, setData] = useState([]);
 
     // Fonction pour récupérer les données de la base de données
@@ -46,7 +92,7 @@ const BandwidthChart = () => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart
-        data={data}
+        data={organizedData}
         margin={{
           top: 5, right: 30, left: 20, bottom: 5,
         }}
