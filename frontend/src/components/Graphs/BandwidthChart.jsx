@@ -1,4 +1,5 @@
-import React from 'react';
+import {useState,useEffect} from 'react';
+import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 // Example data for 4 users
@@ -12,6 +13,36 @@ const data = [
 ];
 
 const BandwidthChart = () => {
+  const [datas, setData] = useState([]);
+
+    // Fonction pour récupérer les données de la base de données
+    const fetchData = async () => {
+        try {
+            axios.get('/api/bandwidth',{
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((res)=>{
+                if (res.status === 200){
+                    console.log(res.data);
+                    setData(res.data);
+                }
+            })
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchData();
+        }, 5000); // Récupérer les données toutes les 5 secondes
+
+        fetchData(); // Appel initial
+
+        return () => clearInterval(interval); // Nettoyage de l'intervalle
+    }, []);
   return (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart

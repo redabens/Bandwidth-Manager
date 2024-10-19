@@ -6,7 +6,7 @@ import BandwidthChart from './components/BandwidthChart';
 const App = () => {
   return (
     <div className="app">
-      <BandwidthChart />
+      <DashboardPage />
     </div>
   );
 };
